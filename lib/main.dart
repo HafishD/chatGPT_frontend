@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 Future<void> main() async {
   // main 関数内で非同期処理を呼び出すための設定
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hackathon Monster Eggs',
+      title: 'Hackathon: Monsters Eggs For Engineer',
       theme: ThemeData(),
       home: TakePictureScreen(camera: camera),
     );
@@ -114,6 +117,23 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                         fullscreenDialog: true,
                       ),
                     );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('No Picture'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
               ),
@@ -137,7 +157,8 @@ class DisplayPictureScreen extends StatefulWidget{
 
 class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   late String _path;
-  late List<String> selected = [];
+  List<File> selected = [];
+  List<String> results = [];
 
   @override
   void initState(){
@@ -154,7 +175,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   @override
   Widget build(BuildContext context){
     return Scaffold(
-      appBar: AppBar(title: const Text('撮れた写真')),
+      appBar: AppBar(title: const Text('Pictures')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -169,10 +190,10 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     File(_path),
                   ),
                   onTap: () {
-                    if (selected.contains(_path)){
-                      selected.removeWhere((element) => element == _path);
+                    if (selected.contains(File(_path))){
+                      selected.removeWhere((element) => element == File(_path));
                     } else {
-                      selected.add(_path);
+                      selected.add(File(_path));
                     }
                   },
                 )
@@ -188,6 +209,68 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                   }
                 ],
               ),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                    onPressed: () async{
+                      List<String> base64Images = [];
+                      for (File img in selected) {
+                        // file -> base64
+                        List<int> imageBytes = img.readAsBytesSync();
+                        String base64Image = base64Encode(imageBytes);
+                        base64Images.add(base64Image);
+                      }
+
+                      Uri url = Uri.parse('http://127.0.0.1:5000/trimming');
+
+                      String body = json.encode({
+                        'post_imgs': base64Images,
+                      });
+
+                      Response response = await http.post(url, body: body);
+
+                      // base64 -> string
+                      String result = response.body;
+                      results.add(result);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgs: selected)),
+                      );
+                    },
+                    child: const Text('Summarize')
+                ),
+                ElevatedButton(
+                    onPressed: () async{
+                      for (int i = 0; i < selected.length; i++) {
+                        File img = selected[i];
+                        // file -> base64
+                        List<int> imageBytes = img.readAsBytesSync();
+                        String base64Image = base64Encode(imageBytes);
+
+                        Uri url = Uri.parse('http://127.0.0.1:5000/trimming');
+
+                        String body = json.encode({
+                          'post_img': base64Image,
+                        });
+
+                        // send to backend
+                        Response response = await http.post(url, body: body);
+
+                        // base64 -> string
+                        String result = response.body;
+                        results.add(result);
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgs: selected)),
+                      );
+                      },
+                    child: const Text('Translate')
+                )
+              ],
             )
           ],
         ),
@@ -199,7 +282,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
       decoration: BoxDecoration(
           border: Border.all(
             color: _path == path ? Colors.redAccent
-                : selected.contains(path) ? Colors.blueAccent
+                : selected.contains(File(path)) ? Colors.blueAccent
                 : Colors.white,
             width: 3.0,
           ),
@@ -215,6 +298,41 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
           if(_path!=path)_changeState(path);
         },
       ),
+    );
+  }
+}
+
+class DisplayResultScreen extends StatefulWidget{
+  const DisplayResultScreen({Key? key, required this.sentences, required this.selectedImgs})
+  : super(key: key);
+
+  final List<String> sentences;
+  final List<File> selectedImgs;
+
+  @override
+  DisplayResultScreenState createState() => DisplayResultScreenState();
+}
+
+class DisplayResultScreenState extends State<DisplayResultScreen>{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Result'),
+        leading: TextButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          child: const Text(
+            '< Back',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+            )
+          ),
+        )
+      ),
+      body: Text('Hello, world!'),
     );
   }
 }
