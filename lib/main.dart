@@ -158,6 +158,7 @@ class DisplayPictureScreen extends StatefulWidget{
 class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   late String _path;
   List<File> selected = [];
+  List<String> selectedPath = [];
   List<String> results = [];
 
   @override
@@ -190,10 +191,13 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     File(_path),
                   ),
                   onTap: () {
-                    if (selected.contains(File(_path))){
-                      selected.removeWhere((element) => element == File(_path));
+                    if (selectedPath.contains(_path)){
+                      int index = selectedPath.indexOf(_path);
+                      selected.removeAt(index);
+                      selectedPath.removeWhere((element) => element == _path);
                     } else {
                       selected.add(File(_path));
+                      selectedPath.add(_path);
                     }
                   },
                 )
@@ -224,10 +228,13 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         base64Images.add(base64Image);
                       }
 
-                      Uri url = Uri.parse('http://127.0.0.1:5000/trimming');
+                      String option = "summarize";
+
+                      Uri url = Uri.parse('http://172.19.0.2:8080/');
 
                       String body = json.encode({
                         'post_imgs': base64Images,
+                        'option': option
                       });
 
                       Response response = await http.post(url, body: body);
@@ -242,6 +249,10 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     },
                     child: const Text('Summarize')
                 ),
+                // debug用
+                // Text(
+                //   "imgs: ${selected.length.toString()} path: ${selectedPath.length.toString()}",
+                // ),
                 ElevatedButton(
                     onPressed: () async{
                       for (int i = 0; i < selected.length; i++) {
@@ -250,10 +261,13 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         List<int> imageBytes = img.readAsBytesSync();
                         String base64Image = base64Encode(imageBytes);
 
-                        Uri url = Uri.parse('http://127.0.0.1:5000/trimming');
+                        String option = "translate";
+
+                        Uri url = Uri.parse('http://172.19.0.2:8080/');
 
                         String body = json.encode({
                           'post_img': base64Image,
+                          'option': option
                         });
 
                         // send to backend
@@ -282,9 +296,10 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
       decoration: BoxDecoration(
           border: Border.all(
             color: _path == path ? Colors.redAccent
-                : selected.contains(File(path)) ? Colors.blueAccent
+                : selectedPath.contains(path) ? Colors.blueAccent
                 : Colors.white,
-            width: 3.0,
+            width: selectedPath.contains(path) == true ? 3.0
+                : 1.0
           ),
       ),
       child: GestureDetector(
@@ -332,7 +347,9 @@ class DisplayResultScreenState extends State<DisplayResultScreen>{
           ),
         )
       ),
-      body: Text('Hello, world!'),
+      body: Center(
+        child: Text(widget.sentences[0]),
+      )
     );
   }
 }
