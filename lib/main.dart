@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Camera Example',
+      title: 'Hackathon Monster Eggs',
       theme: ThemeData(),
       home: TakePictureScreen(camera: camera),
     );
@@ -94,6 +96,126 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         },
         child: const Icon(Icons.camera_alt),
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: IconButton(
+                icon: Icon(Icons.photo),
+                onPressed: () {
+                  //処理
+                  if (imageList.isNotEmpty){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => DisplayPictureScreen(imagePathList: imageList),
+                        fullscreenDialog: true,
+                      ),
+                    );
+                  }
+                },
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
+
+class DisplayPictureScreen extends StatefulWidget{
+  const DisplayPictureScreen({Key? key, required this.imagePathList})
+  : super(key: key);
+
+  final List<String> imagePathList;
+
+  @override
+  DisplayPictureScreenState createState() => DisplayPictureScreenState();
+}
+
+class DisplayPictureScreenState extends State<DisplayPictureScreen> {
+  late String _path;
+  late List<String> selected = [];
+
+  @override
+  void initState(){
+    super.initState();
+    _path = widget.imagePathList[0];
+  }
+
+  void _changeState(String path){
+    setState((){
+      _path = path;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      appBar: AppBar(title: const Text('撮れた写真')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Center(
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 10),
+                height: 300,
+                width: 300,
+                child: GestureDetector(
+                  child: Image.file(
+                    File(_path),
+                  ),
+                  onTap: () {
+                    if (selected.contains(_path)){
+                      selected.removeWhere((element) => element == _path);
+                    } else {
+                      selected.add(_path);
+                    }
+                  },
+                )
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for(int i = 0; i < widget.imagePathList.length; i++) ... {
+                    smallImage(widget.imagePathList[i])
+                  }
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  Widget smallImage(String path) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: _path == path ? Colors.redAccent
+                : selected.contains(path) ? Colors.blueAccent
+                : Colors.white,
+            width: 3.0,
+          ),
+      ),
+      child: GestureDetector(
+        child: Image.file(
+          File(path),
+          width: 100,
+          height: 100,
+          fit: BoxFit.cover,
+        ),
+        onTap: () {
+          if(_path!=path)_changeState(path);
+        },
+      ),
+    );
+  }
+}
+
