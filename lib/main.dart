@@ -107,7 +107,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: IconButton(
-                icon: Icon(Icons.photo),
+                icon: const Icon(Icons.photo),
                 onPressed: () {
                   //処理
                   if (imageList.isNotEmpty){
@@ -122,10 +122,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('No Picture'),
+                          title: const Text('No Picture'),
                           actions: <Widget>[
                             TextButton(
-                              child: Text('OK'),
+                              child: const Text('OK'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -183,7 +183,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
           children: <Widget>[
             Center(
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10),
+                margin: const EdgeInsets.symmetric(vertical: 10),
                 height: 300,
                 width: 300,
                 child: GestureDetector(
@@ -199,6 +199,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       selected.add(File(_path));
                       selectedPath.add(_path);
                     }
+                    setState(() {});
                   },
                 )
               ),
@@ -214,7 +215,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -245,7 +246,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       results.add(result);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgs: selected)),
+                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
                       );
                     },
                     child: const Text('Summarize')
@@ -277,7 +278,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       }
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgs: selected)),
+                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
                       );
                       },
                     child: const Text('Translate')
@@ -315,40 +316,76 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   }
 }
 
-class DisplayResultScreen extends StatefulWidget{
-  const DisplayResultScreen({Key? key, required this.sentences, required this.selectedImgs})
-  : super(key: key);
+class DisplayResultScreen extends StatefulWidget {
+  const DisplayResultScreen(
+      {Key? key, required this.sentences, required this.selectedImgPaths})
+      : super(key: key);
 
   final List<String> sentences;
-  final List<File> selectedImgs;
+  final List<String> selectedImgPaths;
 
   @override
   DisplayResultScreenState createState() => DisplayResultScreenState();
 }
 
-class DisplayResultScreenState extends State<DisplayResultScreen>{
+class DisplayResultScreenState extends State<DisplayResultScreen> {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Result'),
         leading: TextButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
           child: const Text(
             '< Back',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 16.0,
-            )
+              fontSize: 12.0,
+            ),
           ),
-        )
+        ),
       ),
       body: Center(
-        child: Text(widget.sentences[0]),
-      )
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var i = 0; i < widget.sentences.length; i++)
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.file(
+                        File(widget.selectedImgPaths[i]),
+                        width: 300,
+                        height: 300,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        child: SizedBox(
+                          width: 300,
+                          height: 500,
+                          child: Text(
+                            widget.sentences[i],
+                            textAlign: TextAlign.justify,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
+
 
