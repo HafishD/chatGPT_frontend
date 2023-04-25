@@ -220,6 +220,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               children: [
                 ElevatedButton(
                     onPressed: () async{
+                      results.clear();
                       List<String> base64Images = [];
                       for (File img in selected) {
                         // file -> base64
@@ -230,7 +231,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                       String option = "summarize";
 
-                      Uri url = Uri.parse('http://172.19.0.2:8080/');
+                      Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-uc.a.run.app');
 
                       String body = json.encode({
                         'post_imgs': base64Images,
@@ -249,12 +250,9 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     },
                     child: const Text('Summarize')
                 ),
-                // debug用
-                // Text(
-                //   "imgs: ${selected.length.toString()} path: ${selectedPath.length.toString()}",
-                // ),
                 ElevatedButton(
                     onPressed: () async{
+                      results.clear();
                       for (int i = 0; i < selected.length; i++) {
                         File img = selected[i];
                         // file -> base64
@@ -263,7 +261,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                         String option = "translate";
 
-                        Uri url = Uri.parse('http://172.19.0.2:8080/');
+                        Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-uc.a.run.app');
 
                         String body = json.encode({
                           'post_img': base64Image,
