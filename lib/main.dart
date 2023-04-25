@@ -232,7 +232,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                       String option = "summarize";
 
-                      Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-uc.a.run.app');
+                      Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/summarize');
 
                       String body = json.encode({
                         'post_imgs': base64Images,
@@ -262,7 +262,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                         String option = "translate";
 
-                        Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-uc.a.run.app');
+                        Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/translate');
 
                         String body = json.encode({
                           'post_img': base64Image,
@@ -329,6 +329,26 @@ class DisplayResultScreen extends StatefulWidget {
 }
 
 class DisplayResultScreenState extends State<DisplayResultScreen> {
+  late String _path;
+  late String _result;
+  int index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _path = widget.selectedImgPaths[0];
+    _result = widget.sentences[0];
+  }
+
+  void changeState() {
+    setState(() {
+      _path = widget.selectedImgPaths[index];
+      if (widget.sentences.length >= 2){
+        _result = widget.sentences[index];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -347,45 +367,80 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
           ),
         ),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        },
+        child: const Icon(Icons.camera_alt),
+      ),
+      persistentFooterButtons: [
+        Center(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              for (var i = 0; i < widget.sentences.length; i++)
-                Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.file(
-                        File(widget.selectedImgPaths[i]),
-                        width: 300,
-                        height: 300,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: SizedBox(
-                          width: 300,
-                          height: 500,
-                          child: Text(
-                            widget.sentences[i],
-                            textAlign: TextAlign.justify,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              ElevatedButton(
+                onPressed: () {
+                  if (index > 0) {
+                    index--;
+                  } else {
+                    index = widget.selectedImgPaths.length - 1;
+                  }
+                  changeState();
+                },
+                child: const Text(
+                  '<',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                  ),
                 ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (index < widget.selectedImgPaths.length - 1) {
+                    index++;
+                  } else {
+                    index = 0;
+                  }
+                  changeState();
+                },
+                child: const Text(
+                  '>',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.0,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
+      ],
+      body: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.file(
+                File(_path),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                child: Text(
+                  _result,
+                  textAlign: TextAlign.justify,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-
-
