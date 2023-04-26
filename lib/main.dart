@@ -245,8 +245,9 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                       Response response = await http.post(url, headers: headers, body: body);
 
-                      // base64 -> string
-                      String result = response.body;
+
+                      final Map<String, dynamic> responseData = jsonDecode(response.body);
+                      final String result = responseData['result'];
                       results.add(result);
                       Navigator.push(
                         context,
@@ -280,8 +281,9 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         // send to backend
                         Response response = await http.post(url, headers: headers, body: body);
 
-                        // base64 -> string
-                        String result = response.body;
+
+                        final Map<String, dynamic> responseData = jsonDecode(response.body);
+                        final String result = responseData['result'];
                         results.add(result);
                       }
                       Navigator.push(
