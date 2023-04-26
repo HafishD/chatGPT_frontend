@@ -239,7 +239,11 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         'option': option
                       });
 
-                      Response response = await http.post(url, body: body);
+                      Map<String, String> headers = {
+                        'Content-Type': 'application/json'
+                      };
+
+                      Response response = await http.post(url, headers: headers, body: body);
 
                       // base64 -> string
                       String result = response.body;
@@ -269,8 +273,12 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                           'option': option
                         });
 
+                        Map<String, String> headers = {
+                          'Content-Type': 'application/json'
+                        };
+
                         // send to backend
-                        Response response = await http.post(url, body: body);
+                        Response response = await http.post(url, headers: headers, body: body);
 
                         // base64 -> string
                         String result = response.body;
