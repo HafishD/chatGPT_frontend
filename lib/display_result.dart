@@ -82,6 +82,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
                   ),
                 ),
               ),
+              Text('Page: ${(index+1).toString()}'),
               ElevatedButton(
                 onPressed: () {
                   if (index < widget.selectedImgPaths.length - 1) {
