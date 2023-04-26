@@ -82,7 +82,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: () async{
+                    onPressed: selected.isNotEmpty ? () async {
                       results.clear();
                       List<String> base64Images = [];
                       for (File img in selected) {
@@ -115,11 +115,11 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         context,
                         MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
                       );
-                    },
+                    } : null,
                     child: const Text('Summarize')
                 ),
                 ElevatedButton(
-                    onPressed: () async{
+                    onPressed: selected.isNotEmpty ? () async {
                       results.clear();
                       for (int i = 0; i < selected.length; i++) {
                         File img = selected[i];
@@ -152,7 +152,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         context,
                         MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
                       );
-                    },
+                    } : null,
                     child: const Text('Translate')
                 )
               ],
