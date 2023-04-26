@@ -20,6 +20,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
   List<String> imageList = [];
+  FlashMode flashMode = FlashMode.off;
 
   @override
   void initState() {
@@ -43,9 +44,40 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     super.dispose();
   }
 
+  void toggleFlash() {
+    setState(() {
+      switch (flashMode) {
+        case FlashMode.off:
+          flashMode = FlashMode.auto;
+          break;
+        case FlashMode.auto:
+          flashMode = FlashMode.always;
+          break;
+        case FlashMode.always:
+          flashMode = FlashMode.off;
+          break;
+      }
+    });
+    _controller.setFlashMode(flashMode);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              flashMode == FlashMode.off
+                  ? Icons.flash_off
+                  : flashMode == FlashMode.auto
+                  ? Icons.flash_auto
+                  : Icons.flash_on,
+            ),
+            onPressed: toggleFlash,
+          ),
+        ],
+      ),
       body: Center(
         child: FutureBuilder<void>(
           future: _initializeControllerFuture,

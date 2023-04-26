@@ -47,10 +47,26 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   height: 300,
-                  width: 300,
+                  // width: 300,
                   child: GestureDetector(
-                    child: Image.file(
-                      File(_path),
+                    child: Stack(
+                      children: [
+                        Image.file(
+                          File(_path),
+                        ),
+                        if (selectedPath.contains(_path))
+                          const Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: Icon(Icons.check_circle, color: Colors.blueAccent),
+                          )
+                        else
+                          const Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: Icon(Icons.check_circle_outline, color: Colors.grey),
+                          ),
+                      ],
                     ),
                     onTap: () {
                       if (selectedPath.contains(_path)){
