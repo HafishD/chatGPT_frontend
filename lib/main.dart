@@ -110,10 +110,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 icon: const Icon(Icons.photo),
                 onPressed: () {
                   //処理
-                  if (imageList.isNotEmpty){
+                  if (imageList.isNotEmpty) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => DisplayPictureScreen(imagePathList: imageList),
+                        builder: (context) =>
+                            DisplayPictureScreen(imagePathList: imageList),
                         fullscreenDialog: true,
                       ),
                     );
@@ -145,9 +146,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 }
 
-class DisplayPictureScreen extends StatefulWidget{
+class DisplayPictureScreen extends StatefulWidget {
   const DisplayPictureScreen({Key? key, required this.imagePathList})
-  : super(key: key);
+      : super(key: key);
 
   final List<String> imagePathList;
 
@@ -162,19 +163,19 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   List<String> results = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _path = widget.imagePathList[0];
   }
 
-  void _changeState(String path){
-    setState((){
+  void _changeState(String path) {
+    setState(() {
       _path = path;
     });
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Pictures')),
       body: Center(
@@ -183,33 +184,32 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
           children: <Widget>[
             Center(
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                height: 300,
-                width: 300,
-                child: GestureDetector(
-                  child: Image.file(
-                    File(_path),
-                  ),
-                  onTap: () {
-                    if (selectedPath.contains(_path)){
-                      int index = selectedPath.indexOf(_path);
-                      selected.removeAt(index);
-                      selectedPath.removeWhere((element) => element == _path);
-                    } else {
-                      selected.add(File(_path));
-                      selectedPath.add(_path);
-                    }
-                    setState(() {});
-                  },
-                )
-              ),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  height: 300,
+                  width: 300,
+                  child: GestureDetector(
+                    child: Image.file(
+                      File(_path),
+                    ),
+                    onTap: () {
+                      if (selectedPath.contains(_path)) {
+                        int index = selectedPath.indexOf(_path);
+                        selected.removeAt(index);
+                        selectedPath.removeWhere((element) => element == _path);
+                      } else {
+                        selected.add(File(_path));
+                        selectedPath.add(_path);
+                      }
+                      setState(() {});
+                    },
+                  )),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for(int i = 0; i < widget.imagePathList.length; i++) ... {
+                  for (int i = 0; i < widget.imagePathList.length; i++) ...{
                     smallImage(widget.imagePathList[i])
                   }
                 ],
@@ -220,7 +220,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       results.clear();
                       List<String> base64Images = [];
                       for (File img in selected) {
@@ -232,32 +232,34 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                       String option = "summarize";
 
-                      Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/summarize');
+                      Uri url =
+                          Uri.parse('http://192.168.0.215:5050/translate');
 
-                      String body = json.encode({
-                        'post_imgs': base64Images,
-                        'option': option
-                      });
+                      String body = json.encode(
+                          {'post_imgs': base64Images, 'option': option});
 
                       Map<String, String> headers = {
                         'Content-Type': 'application/json'
                       };
 
-                      Response response = await http.post(url, headers: headers, body: body);
+                      Response response =
+                          await http.post(url, headers: headers, body: body);
 
-
-                      final Map<String, dynamic> responseData = jsonDecode(response.body);
+                      final Map<String, dynamic> responseData =
+                          jsonDecode(response.body);
                       final String result = responseData['result'];
                       results.add(result);
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
+                        MaterialPageRoute(
+                            builder: (context) => DisplayResultScreen(
+                                sentences: results,
+                                selectedImgPaths: selectedPath)),
                       );
                     },
-                    child: const Text('Summarize')
-                ),
+                    child: const Text('Summarize')),
                 ElevatedButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       results.clear();
                       for (int i = 0; i < selected.length; i++) {
                         File img = selected[i];
@@ -267,32 +269,34 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
 
                         String option = "translate";
 
-                        Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/translate');
+                        Uri url =
+                            Uri.parse('http://192.168.0.215:5050/translate');
 
-                        String body = json.encode({
-                          'post_img': base64Image,
-                          'option': option
-                        });
+                        String body = json.encode(
+                            {'post_img': base64Image, 'option': option});
 
                         Map<String, String> headers = {
                           'Content-Type': 'application/json'
                         };
 
                         // send to backend
-                        Response response = await http.post(url, headers: headers, body: body);
+                        Response response =
+                            await http.post(url, headers: headers, body: body);
 
-
-                        final Map<String, dynamic> responseData = jsonDecode(response.body);
+                        final Map<String, dynamic> responseData =
+                            jsonDecode(response.body);
                         final String result = responseData['result'];
                         results.add(result);
                       }
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
+                        MaterialPageRoute(
+                            builder: (context) => DisplayResultScreen(
+                                sentences: results,
+                                selectedImgPaths: selectedPath)),
                       );
-                      },
-                    child: const Text('Translate')
-                )
+                    },
+                    child: const Text('Translate'))
               ],
             )
           ],
@@ -300,16 +304,17 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
       ),
     );
   }
+
   Widget smallImage(String path) {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(
-            color: _path == path ? Colors.redAccent
-                : selectedPath.contains(path) ? Colors.blueAccent
-                : Colors.white,
-            width: selectedPath.contains(path) == true ? 3.0
-                : 1.0
-          ),
+        border: Border.all(
+            color: _path == path
+                ? Colors.redAccent
+                : selectedPath.contains(path)
+                    ? Colors.blueAccent
+                    : Colors.white,
+            width: selectedPath.contains(path) == true ? 3.0 : 1.0),
       ),
       child: GestureDetector(
         child: Image.file(
@@ -319,7 +324,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          if(_path!=path)_changeState(path);
+          if (_path != path) _changeState(path);
         },
       ),
     );
@@ -353,7 +358,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
   void changeState() {
     setState(() {
       _path = widget.selectedImgPaths[index];
-      if (widget.sentences.length >= 2){
+      if (widget.sentences.length >= 2) {
         _result = widget.sentences[index];
       }
     });
