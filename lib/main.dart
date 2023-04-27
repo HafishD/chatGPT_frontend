@@ -25,7 +25,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hackathon: Monsters Eggs For Engineer',
-      theme: ThemeData(),
+      theme: ThemeData.dark().copyWith(
+        primaryColor: Color.fromARGB(255, 72, 78, 72),
+      ),
+      darkTheme: ThemeData.dark().copyWith(
+        primaryColor: Colors.green,
+      ),
+      themeMode: ThemeMode.system,
       home: TakePictureScreen(camera: camera),
     );
   }
