@@ -7,7 +7,7 @@ import 'package:http/http.dart';
 
 import 'display_result.dart';
 
-class DisplayPictureScreen extends StatefulWidget{
+class DisplayPictureScreen extends StatefulWidget {
   const DisplayPictureScreen({Key? key, required this.imagePathList})
       : super(key: key);
 
@@ -24,21 +24,24 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   List<String> results = [];
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _path = widget.imagePathList[0];
   }
 
-  void _changeState(String path){
-    setState((){
+  void _changeState(String path) {
+    setState(() {
       _path = path;
     });
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pictures')),
+      appBar: AppBar(
+        title: const Text('Pictures'),
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +56,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       File(_path),
                     ),
                     onTap: () {
-                      if (selectedPath.contains(_path)){
+                      if (selectedPath.contains(_path)) {
                         int index = selectedPath.indexOf(_path);
                         selected.removeAt(index);
                         selectedPath.removeWhere((element) => element == _path);
@@ -63,15 +66,14 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       }
                       setState(() {});
                     },
-                  )
-              ),
+                  )),
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  for(int i = 0; i < widget.imagePathList.length; i++) ... {
+                  for (int i = 0; i < widget.imagePathList.length; i++) ...{
                     smallImage(widget.imagePathList[i])
                   }
                 ],
@@ -82,79 +84,113 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: selected.isNotEmpty ? () async {
-                      results.clear();
-                      List<String> base64Images = [];
-                      for (File img in selected) {
-                        // file -> base64
-                        List<int> imageBytes = img.readAsBytesSync();
-                        String base64Image = base64Encode(imageBytes);
-                        base64Images.add(base64Image);
+                    onPressed: selected.isNotEmpty
+                        ? () async {
+                            results.clear();
+                            List<String> base64Images = [];
+                            for (File img in selected) {
+                              // file -> base64
+                              List<int> imageBytes = img.readAsBytesSync();
+                              String base64Image = base64Encode(imageBytes);
+                              base64Images.add(base64Image);
+                            }
+
+                            String option = "summarize";
+
+                            Uri url = Uri.parse(
+                                'https://chatgpt-backend-fmj2cdy42a-an.a.run.app/summarize');
+
+                            String body = json.encode(
+                                {'post_imgs': base64Images, 'option': option});
+
+                            Map<String, String> headers = {
+                              'Content-Type': 'application/json'
+                            };
+
+                            Response response = await http.post(url,
+                                headers: headers, body: body);
+
+                            final Map<String, dynamic> responseData =
+                                jsonDecode(response.body);
+                            final String result = responseData['result'];
+                            results.add(result);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DisplayResultScreen(
+                                      sentences: results,
+                                      selectedImgPaths: selectedPath)),
+                            );
+                          }
+                        : null,
+                    // style: ElevatedButton.styleFrom(
+                    // backgroundColor: Color.fromARGB(255, 72, 78, 72),
+                    // ),
+                    style: ButtonStyle(backgroundColor:
+                        MaterialStateProperty.resolveWith((states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return Colors.grey;
+                      } else if (Theme.of(context).brightness ==
+                          Brightness.light) {
+                        return Color.fromARGB(255, 67, 87, 146);
+                      } else {
+                        return Color.fromARGB(255, 67, 87, 146);
                       }
-
-                      String option = "summarize";
-
-                      Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/summarize');
-
-                      String body = json.encode({
-                        'post_imgs': base64Images,
-                        'option': option
-                      });
-
-                      Map<String, String> headers = {
-                        'Content-Type': 'application/json'
-                      };
-
-                      Response response = await http.post(url, headers: headers, body: body);
-
-
-                      final Map<String, dynamic> responseData = jsonDecode(response.body);
-                      final String result = responseData['result'];
-                      results.add(result);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
-                      );
-                    } : null,
-                    child: const Text('Summarize')
-                ),
+                    })),
+                    child: const Text('Summarize')),
                 ElevatedButton(
-                    onPressed: selected.isNotEmpty ? () async {
-                      results.clear();
-                      for (int i = 0; i < selected.length; i++) {
-                        File img = selected[i];
-                        // file -> base64
-                        List<int> imageBytes = img.readAsBytesSync();
-                        String base64Image = base64Encode(imageBytes);
+                  onPressed: selected.isNotEmpty
+                      ? () async {
+                          results.clear();
+                          for (int i = 0; i < selected.length; i++) {
+                            File img = selected[i];
+                            // file -> base64
+                            List<int> imageBytes = img.readAsBytesSync();
+                            String base64Image = base64Encode(imageBytes);
 
-                        String option = "translate";
+                            String option = "translate";
 
-                        Uri url = Uri.parse('https://chatgpt-backend-fmj2cdy42a-an.a.run.app/translate');
+                            Uri url = Uri.parse(
+                                'https://chatgpt-backend-fmj2cdy42a-an.a.run.app/translate');
 
-                        String body = json.encode({
-                          'post_img': base64Image,
-                          'option': option
-                        });
+                            String body = json.encode(
+                                {'post_img': base64Image, 'option': option});
 
-                        Map<String, String> headers = {
-                          'Content-Type': 'application/json'
-                        };
+                            Map<String, String> headers = {
+                              'Content-Type': 'application/json'
+                            };
 
-                        // send to backend
-                        Response response = await http.post(url, headers: headers, body: body);
+                            // send to backend
+                            Response response = await http.post(url,
+                                headers: headers, body: body);
 
-
-                        final Map<String, dynamic> responseData = jsonDecode(response.body);
-                        final String result = responseData['result'];
-                        results.add(result);
-                      }
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DisplayResultScreen(sentences: results, selectedImgPaths: selectedPath)),
-                      );
-                    } : null,
-                    child: const Text('Translate')
-                )
+                            final Map<String, dynamic> responseData =
+                                jsonDecode(response.body);
+                            final String result = responseData['result'];
+                            results.add(result);
+                          }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DisplayResultScreen(
+                                    sentences: results,
+                                    selectedImgPaths: selectedPath)),
+                          );
+                        }
+                      : null,
+                  style: ButtonStyle(backgroundColor:
+                      MaterialStateProperty.resolveWith((states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return Colors.grey;
+                    } else if (Theme.of(context).brightness ==
+                        Brightness.light) {
+                      return Color.fromARGB(255, 67, 87, 146);
+                    } else {
+                      return Color.fromARGB(255, 67, 87, 146);
+                    }
+                  })),
+                  child: const Text('Translate'),
+                ),
               ],
             )
           ],
@@ -162,16 +198,17 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
       ),
     );
   }
+
   Widget smallImage(String path) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
-            color: _path == path ? Colors.redAccent
-                : selectedPath.contains(path) ? Colors.blueAccent
-                : Colors.white,
-            width: selectedPath.contains(path) == true ? 3.0
-                : 1.0
-        ),
+            color: _path == path
+                ? Colors.redAccent
+                : selectedPath.contains(path)
+                    ? Colors.grey
+                    : Colors.white.withOpacity(0),
+            width: 1.0),
       ),
       child: GestureDetector(
         child: Image.file(
@@ -181,7 +218,7 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
           fit: BoxFit.cover,
         ),
         onTap: () {
-          if(_path!=path)_changeState(path);
+          if (_path != path) _changeState(path);
         },
       ),
     );

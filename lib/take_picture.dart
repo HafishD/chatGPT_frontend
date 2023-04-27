@@ -70,6 +70,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
+        color: Colors.white.withOpacity(0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -79,10 +80,11 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 icon: const Icon(Icons.photo),
                 onPressed: () {
                   //処理
-                  if (imageList.isNotEmpty){
+                  if (imageList.isNotEmpty) {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => DisplayPictureScreen(imagePathList: imageList),
+                        builder: (context) =>
+                            DisplayPictureScreen(imagePathList: imageList),
                         fullscreenDialog: true,
                       ),
                     );
