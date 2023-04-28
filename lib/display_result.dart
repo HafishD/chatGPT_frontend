@@ -102,7 +102,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
 
         if (snapshot.hasData) {
           sentences = snapshot.data!;
-          _result = sentences[0];
+          _result = sentences[index];
           child = <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
