@@ -21,6 +21,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   late Future<void> _initializeControllerFuture;
   List<String> imageList = [];
   FlashMode flashMode = FlashMode.off;
+  bool isBlackout = false;
 
   @override
   void initState() {
@@ -78,25 +79,40 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return CameraPreview(_controller);
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
+      body: Stack(
+        children: [
+          Center(
+            child: FutureBuilder<void>(
+              future: _initializeControllerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return CameraPreview(_controller);
+                } else {
+                  return const CircularProgressIndicator();
+                }
+              },
+            ),
+          ),
+          if (isBlackout)
+            Container(
+              color: Colors.black.withOpacity(1.0),
+            ),
+        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          setState(() {
+            isBlackout = true;
+          });
           // 写真を撮る
           final image = await _controller.takePicture();
           // 写真をリストに格納
           imageList.add(image.path);
+          await Future.delayed(const Duration(seconds: 1));
+          setState(() {
+            isBlackout = false;
+          });
         },
         child: const Icon(Icons.camera_alt),
       ),

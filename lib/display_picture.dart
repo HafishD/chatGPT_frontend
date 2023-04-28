@@ -50,7 +50,6 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   height: 300,
-                  // width: 300,
                   child: GestureDetector(
                     child: Stack(
                       children: [
