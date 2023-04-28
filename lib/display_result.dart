@@ -102,7 +102,11 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
 
         if (snapshot.hasData) {
           sentences = snapshot.data!;
-          _result = sentences[index];
+          if (sentences.length >= 2){
+            _result = sentences[index];
+          } else {
+            _result = sentences[0];
+          }
           child = <Widget>[
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -124,7 +128,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
         } else if (snapshot.hasError) {
           child = [
             const Center(
-              child: Text('エラー'),
+              child: Text('Connection Error: Please Try Again'),
             ),
           ];
         } else {
