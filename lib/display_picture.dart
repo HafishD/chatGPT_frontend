@@ -40,6 +40,18 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pictures'),
+        leading: TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text(
+            '< Back',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12.0,
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Center(
@@ -60,13 +72,15 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                           const Positioned(
                             bottom: 10,
                             right: 10,
-                            child: Icon(Icons.check_circle, color: Colors.blueAccent),
+                            child: Icon(Icons.check_circle,
+                                color: Colors.blueAccent),
                           )
                         else
                           const Positioned(
                             bottom: 10,
                             right: 10,
-                            child: Icon(Icons.check_circle_outline, color: Colors.grey),
+                            child: Icon(Icons.check_circle_outline,
+                                color: Colors.grey),
                           ),
                       ],
                     ),

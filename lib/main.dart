@@ -6,7 +6,6 @@ import 'take_picture.dart';
 Future<void> main() async {
   // main 関数内で非同期処理を呼び出すための設定
   WidgetsFlutterBinding.ensureInitialized();
-  // await FlutterNativeSplash.show();
   // デバイスで使用可能なカメラのリストを取得
   final cameras = await availableCameras();
   // 利用可能なカメラのリストから特定のカメラを取得
@@ -25,12 +24,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'PageShot',
+      title: 'Hackathon: Monsters Eggs For Engineer',
       theme: ThemeData.light().copyWith(
-        primaryColor: Color.fromARGB(255, 71, 78, 72),
+        primaryColor: Color.fromARGB(255, 205, 205, 205),
       ),
       darkTheme: ThemeData.dark().copyWith(
-        primaryColor: Colors.green,
+        primaryColor: Color.fromARGB(255, 12, 12, 12),
       ),
       themeMode: ThemeMode.system,
       home: TakePictureScreen(camera: camera),
