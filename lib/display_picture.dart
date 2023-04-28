@@ -1,9 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 
 import 'display_result.dart';
 
@@ -19,9 +16,7 @@ class DisplayPictureScreen extends StatefulWidget {
 
 class DisplayPictureScreenState extends State<DisplayPictureScreen> {
   late String _path;
-  List<File> selected = [];
   List<String> selectedPath = [];
-  List<String> results = [];
 
   @override
   void initState() {
@@ -86,11 +81,8 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                     ),
                     onTap: () {
                       if (selectedPath.contains(_path)) {
-                        int index = selectedPath.indexOf(_path);
-                        selected.removeAt(index);
                         selectedPath.removeWhere((element) => element == _path);
                       } else {
-                        selected.add(File(_path));
                         selectedPath.add(_path);
                       }
                       setState(() {});
@@ -113,42 +105,17 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                    onPressed: selected.isNotEmpty
+                    onPressed: selectedPath.isNotEmpty
                         ? () async {
-                            results.clear();
-                            List<String> base64Images = [];
-                            for (File img in selected) {
-                              // file -> base64
-                              List<int> imageBytes = img.readAsBytesSync();
-                              String base64Image = base64Encode(imageBytes);
-                              base64Images.add(base64Image);
-                            }
-
-                            String option = "summarize";
-
                             Uri url = Uri.parse(
                                 'https://chatgpt-backend-fmj2cdy42a-an.a.run.app/summarize');
 
-                            String body = json.encode(
-                                {'post_imgs': base64Images, 'option': option});
-
-                            Map<String, String> headers = {
-                              'Content-Type': 'application/json'
-                            };
-
-                            Response response = await http.post(url,
-                                headers: headers, body: body);
-
-                            final Map<String, dynamic> responseData =
-                                jsonDecode(response.body);
-                            final String result = responseData['result'];
-                            results.add(result);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => DisplayResultScreen(
-                                      sentences: results,
-                                      selectedImgPaths: selectedPath)),
+                                      selectedImgPaths: selectedPath,
+                                      url: url)),
                             );
                           }
                         : null,
@@ -161,49 +128,24 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                         return Colors.grey;
                       } else if (Theme.of(context).brightness ==
                           Brightness.light) {
-                        return Color.fromARGB(255, 67, 87, 146);
+                        return const Color.fromARGB(255, 67, 87, 146);
                       } else {
-                        return Color.fromARGB(255, 67, 87, 146);
+                        return const Color.fromARGB(255, 67, 87, 146);
                       }
                     })),
                     child: const Text('Summarize')),
                 ElevatedButton(
-                  onPressed: selected.isNotEmpty
+                  onPressed: selectedPath.isNotEmpty
                       ? () async {
-                          results.clear();
-                          for (int i = 0; i < selected.length; i++) {
-                            File img = selected[i];
-                            // file -> base64
-                            List<int> imageBytes = img.readAsBytesSync();
-                            String base64Image = base64Encode(imageBytes);
-
-                            String option = "translate";
-
-                            Uri url = Uri.parse(
+                          Uri url = Uri.parse(
                                 'https://chatgpt-backend-fmj2cdy42a-an.a.run.app/translate');
 
-                            String body = json.encode(
-                                {'post_img': base64Image, 'option': option});
-
-                            Map<String, String> headers = {
-                              'Content-Type': 'application/json'
-                            };
-
-                            // send to backend
-                            Response response = await http.post(url,
-                                headers: headers, body: body);
-
-                            final Map<String, dynamic> responseData =
-                                jsonDecode(response.body);
-                            final String result = responseData['result'];
-                            results.add(result);
-                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => DisplayResultScreen(
-                                    sentences: results,
-                                    selectedImgPaths: selectedPath)),
+                                    selectedImgPaths: selectedPath,
+                                    url: url)),
                           );
                         }
                       : null,
@@ -213,9 +155,9 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       return Colors.grey;
                     } else if (Theme.of(context).brightness ==
                         Brightness.light) {
-                      return Color.fromARGB(255, 67, 87, 146);
+                      return const Color.fromARGB(255, 67, 87, 146);
                     } else {
-                      return Color.fromARGB(255, 67, 87, 146);
+                      return const Color.fromARGB(255, 67, 87, 146);
                     }
                   })),
                   child: const Text('Translate'),
@@ -237,7 +179,9 @@ class DisplayPictureScreenState extends State<DisplayPictureScreen> {
                 : selectedPath.contains(path)
                     ? Colors.grey
                     : Colors.white.withOpacity(0),
-            width: 1.0),
+            width: selectedPath.contains(path) == true ? 3.0
+                : 1.0
+        ),
       ),
       child: GestureDetector(
         child: Image.file(
