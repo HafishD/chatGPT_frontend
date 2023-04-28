@@ -29,7 +29,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
   void changeState() {
     setState(() {
       _path = widget.selectedImgPaths[index];
-      if (widget.sentences.length >= 2){
+      if (widget.sentences.length >= 2) {
         _result = widget.sentences[index];
       }
     });
@@ -39,6 +39,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text('Result'),
         leading: TextButton(
           onPressed: () {
@@ -82,7 +83,6 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
                   ),
                 ),
               ),
-              Text('Page: ${(index+1).toString()}'),
               ElevatedButton(
                 onPressed: () {
                   if (index < widget.selectedImgPaths.length - 1) {
