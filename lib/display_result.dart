@@ -149,6 +149,7 @@ class DisplayResultScreenState extends State<DisplayResultScreen> {
 
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColor,
             title: const Text('Result'),
             leading: TextButton(
               onPressed: () {
