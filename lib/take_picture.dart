@@ -71,8 +71,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               flashMode == FlashMode.off
                   ? Icons.flash_off
                   : flashMode == FlashMode.auto
-                  ? Icons.flash_auto
-                  : Icons.flash_on,
+                      ? Icons.flash_auto
+                      : Icons.flash_on,
             ),
             onPressed: toggleFlash,
           ),

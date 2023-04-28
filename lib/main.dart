@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'take_picture.dart';
 
@@ -24,9 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hackathon: Monsters Eggs For Engineer',
-      theme: ThemeData.dark().copyWith(
-        primaryColor: Color.fromARGB(255, 72, 78, 72),
+      title: 'PageShot',
+      theme: ThemeData.light().copyWith(
+        primaryColor: Color.fromARGB(255, 71, 78, 72),
       ),
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.green,
