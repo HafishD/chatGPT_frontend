@@ -110,7 +110,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           final image = await _controller.takePicture();
           // 写真をリストに格納
           imageList.add(image.path);
-          await Future.delayed(const Duration(seconds: 1));
+          // await Future.delayed(const Duration(milliseconds: 200));
           setState(() {
             isBlackout = false;
           });
