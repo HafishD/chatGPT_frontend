@@ -57,9 +57,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter_native_splash:
   color: "#ffffff"
-  image: images/sample.png
-  color_dark: "#ffffff"
-  image_dark: images/sample.png
+  image: images/logo_nobg.png
+  color_dark: "#777777"
+  image_dark: images/logo_nobg.png
   fullscreen: true
   android: true
   ios: true
@@ -70,6 +70,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - images/logo_nobg.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
