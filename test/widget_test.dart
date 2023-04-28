@@ -9,11 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:hackathon_monstereggs/main.dart';
+import 'package:camera/camera.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // デバイスで使用可能なカメラのリストを取得
+    final cameras = await availableCameras();
+    // 利用可能なカメラのリストから特定のカメラを取得
+    final firstCamera = cameras.first;
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(camera: firstCamera));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
