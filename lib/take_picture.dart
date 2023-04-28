@@ -66,14 +66,15 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         actions: <Widget>[
           IconButton(
             icon: Icon(
               flashMode == FlashMode.off
                   ? Icons.flash_off
                   : flashMode == FlashMode.auto
-                  ? Icons.flash_auto
-                  : Icons.flash_on,
+                      ? Icons.flash_auto
+                      : Icons.flash_on,
             ),
             onPressed: toggleFlash,
           ),
@@ -95,7 +96,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           ),
           if (isBlackout)
             Container(
-              color: Colors.black.withOpacity(1.0),
+              color: Color.fromARGB(255, 11, 11, 11).withOpacity(1.0),
             ),
         ],
       ),
@@ -118,7 +119,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
-        color: Colors.white.withOpacity(0),
+        // color: Color.fromARGB(255, 186, 211, 222).withOpacity(0),
+        color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[

@@ -34,7 +34,8 @@ dependencies:
   path_provider: ^2.0.9
   path: ^1.8.0
   http: ^0.13.4-nullsafety.1
-  flutter_native_splash: ^2.2.19
+  flutter_native_splash: 2.2.15
+  flutter_launcher_icons: 0.11.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -56,13 +57,19 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter_native_splash:
-  color: "#000000"
-  image: images/splash.png
-  color_dark: "#ffffff"
-  image_dark: images/splash.png
+  color: "#ffffff"
+  image: images/logo_nobg.png
+  color_dark: "#777777"
+  image_dark: images/logo_nobg.png
   fullscreen: true
   android: true
-  ios: true
+  ios: false
+
+flutter_icons:
+  android: "lancher_icon"
+  image_path: "images/icon1_bg.png"
+  adaptive_icon_background: "images/whitebg.png"
+
 
 flutter:
 
@@ -70,6 +77,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - images/logo_nobg.png
+    - images/icon1_bg.png
+    - images/whitebg.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
