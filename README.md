@@ -1,16 +1,18 @@
-# hackathon_monstereggs
+# PageShot
 
-A new Flutter project.
+Book Summarization & English → Japanese Translation by pictures mobile app for Android using OCR & ChatGPT API
 
-## Getting Started
+## Features
+・Light Theme & Dark Theme
 
-This project is a starting point for a Flutter application.
+# Camera Screen
+・Flash function
 
-A few resources to get you started if this is your first Flutter project:
+# Picture Selection Screen
+・Checkmark for selected pictures
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Result Screen
+・Summarization :
+　・only Pictures changes
+・Translation :
+　・Picture and its Translation Text are in set
