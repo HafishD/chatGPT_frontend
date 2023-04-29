@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.system,
       home: TakePictureScreen(camera: camera),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
